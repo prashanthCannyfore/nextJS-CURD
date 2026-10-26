@@ -1,6 +1,6 @@
 # Installation and configuration
 
-Use [DEPLOYMENT.md](DEPLOYMENT.md) for Vercel, Render, and Supabase. The instructions below describe local development. Your active database is the one configured in `database/.env`; select the same host, port, and database in pgAdmin.
+Use [DEPLOYMENT.md](DEPLOYMENT.md) for deploying the frontend and backend together on Vercel with Supabase or Neon PostgreSQL. The instructions below describe local development. Your active database is the one configured in `database/.env`; select the same host, port, and database in pgAdmin.
 
 ## Which files should I read?
 
@@ -127,14 +127,27 @@ POST and PUT accept JSON:
 
 ## 7. Build and deploy
 
-For the complete dashboard walkthrough, see [DEPLOYMENT.md](DEPLOYMENT.md).
+Vercel Services deploy the Next.js frontend and Express backend from this repository as one project. The root `vercel.json` names the services and routes `/api/*` to Express and other paths to Next.js. Keep the Vercel project root at the repository root; do not set it to `frontend` or `backend`.
 
-Supabase/Neon host the database; frontend and backend need application hosting.
+Set these Vercel environment variables:
 
-- Backend: install from the repository root with `npm ci`; build with `npm run build -w database && npm run build -w backend`; run compiled migrations once with `npm run migration:run:prod -w database`; start with `npm run start -w backend`.
-- Set database variables and `FRONTEND_URL` on the backend host. Use the deployed frontend origin for `FRONTEND_URL` and the host's assigned `PORT`.
-- Frontend: set `NEXT_PUBLIC_API_URL=https://YOUR-API-HOST/api` before building; build with `npm run build -w frontend`; start with `npm run start -w frontend -- --port 3000` (use the port required by your host).
-- Keep the repository root available for workspace dependency installation. A custom CA path must exist on the backend host.
+| Key | Value |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL` | `/api` |
+| `DATABASE_URL` | Your Supabase or Neon PostgreSQL connection URI |
+| `DATABASE_SSL_MODE` | `verify-full` |
+| `DATABASE_SSL_CA` | Supabase CA certificate PEM contents, if the provider requires a custom CA |
+
+Set `NEXT_PUBLIC_API_URL` for Production and Preview. Set database variables for every environment you intend to use; Preview can share the Production database, so use disposable data or a separate database. Do not add `NEXT_PUBLIC_` to database variables.
+
+Run the initial migration once before using the deployed API. Put the hosted connection settings in the ignored local `database/.env`, then run:
+
+```powershell
+npm run build -w database
+npm run migration:run:prod -w database
+```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for Vercel import steps, environment setup, migrations, and verification.
 
 This simple application has no login. Add authentication and authorization before allowing public access to the write API.
 

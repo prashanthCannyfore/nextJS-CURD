@@ -23,13 +23,14 @@ if (sslMode !== "disable" && sslMode !== "verify-full") {
   throw new Error("DATABASE_SSL_MODE must be disable or verify-full.");
 }
 const caFile = process.env.DATABASE_SSL_CA_PATH;
+const caCertificate = process.env.DATABASE_SSL_CA;
 
 const database = new DataSource({
   type: "postgres",
   url: url.toString(),
   ssl: sslMode === "disable" ? false : {
     rejectUnauthorized: true,
-    ca: caFile ? readFileSync(caFile, "utf8") : undefined,
+    ca: caCertificate || (caFile ? readFileSync(caFile, "utf8") : undefined),
   },
   entities: [User],
   migrations: [resolve(__dirname, "migrations/*{.ts,.js}")],

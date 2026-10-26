@@ -2,7 +2,7 @@
   "name": "@users/backend", "version": "1.0.0", "private": true,
   "scripts": {
     "dev": "node --watch --require ts-node/register src/server.ts",
-    "build": "tsc",
+    "build": "npm run build -w @users/database && tsc",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "db:migrate": "npm run migration:run --workspace=@users/database"

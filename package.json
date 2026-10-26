@@ -1,7 +1,15 @@
 {
-  "name": "users-crud", "version": "1.0.0", "private": true,
-  "workspaces": ["frontend", "backend", "database"],
-  "engines": { "node": ">=22" },
+  "name": "users-crud",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend",
+    "database"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "npm run build -w database && concurrently -k -n API,WEB \"npm run dev -w backend\" \"npm run dev -w frontend\"",
     "build": "npm run build -w database && npm run build -w backend && npm run build -w frontend",
@@ -9,5 +17,10 @@
     "db:migrate": "npm run migration:run -w database",
     "db:revert": "npm run migration:revert -w database"
   },
-  "devDependencies": { "concurrently": "^9.2.1" }
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "ts-node": "^10.9.2",
+    "typeorm-ts-node-commonjs": "^0.3.20",
+    "typescript": "^7.0.2"
+  }
 }
